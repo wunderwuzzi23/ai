@@ -1,4 +1,4 @@
-# huskai - Husky or not?
+# huskyai - Husky or not?
 
 A model and website that will predict if an uploaded image is a husky or not.
 Model was created from scratch with random images (about 1000 huskies and 4000 non husky images)
