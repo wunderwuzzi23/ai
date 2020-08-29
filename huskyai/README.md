@@ -17,3 +17,16 @@ openssl genrsa -out server.key 2048
 openssl ecparam -genkey -name secp384r1 -out server.key
 openssl req -new -x509 -sha256 -key server.key -out server.crt -days 7300
 ```
+## Other useful info
+
+Easy way to keep the web server up and running via `flock`
+
+```
+sudo crontab -e
+```
+
+and then adding the following line to cron
+
+```
+* * * * * /usr/bin/flock -n /tmp/huskyai.lock su - webserveruseraccount -c "cd /opt/huskyai/ && python huskyai.py"
+```
