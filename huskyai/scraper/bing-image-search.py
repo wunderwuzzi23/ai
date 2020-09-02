@@ -30,11 +30,14 @@ for current_page in range(max_page):
     response = requests.get(search_url, headers=headers, params=params)
     response.raise_for_status()
     search_results = response.json()
+    
+    print("Offset:" + str(offset))
+    print("Next Offset" + str(search_results["nextOffset"]))
 
-    offset = search_results["nextOffset"]
 
+    image_count = len(search_results["value"][:]) 
 
-    for i in range(count):
+    for i in range(image_count):
         url  = search_results["value"][:][i]["thumbnailUrl"]  #contentUrl
         id  = search_results["value"][:][i]["imageId"]
 
@@ -45,6 +48,8 @@ for current_page in range(max_page):
     
         image = Image.open(BytesIO(image_data.content))
         image = image.save(filename, "JPEG")    
+
+    offset = search_results["nextOffset"]
 
 print("Done")
 
