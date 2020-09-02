@@ -8,7 +8,8 @@ import uuid
 #config
 download_folder = "data/huskies"
 search_term = "siberian husky"
-subscription_key =  open("/home/hacker/.bingimagessearchkey","rt").readline().rstrip("\n")
+bing_api_key = os.path.join(os.getenv('HOME'), ".bingimagessearchkey")
+subscription_key =  open(bing_api_key,"rt").readline().rstrip("\n")
 count = 100
 max_page = 10   
 
@@ -34,8 +35,8 @@ for current_page in range(max_page):
 
 
     for i in range(count):
-        url  = search_results["value"][0:count][i]["thumbnailUrl"]  #contentUrl
-        id  = search_results["value"][0:count][i]["imageId"]
+        url  = search_results["value"][:][i]["thumbnailUrl"]  #contentUrl
+        id  = search_results["value"][:][i]["imageId"]
 
         print(f"Processing ({i}) - {id}")
         image_data = requests.get(url)
@@ -46,3 +47,15 @@ for current_page in range(max_page):
         image = image.save(filename, "JPEG")    
 
 print("Done")
+
+
+#plot the images
+# f, axes = plt.subplots(4, 4)
+# for i in range(4):
+#     for j in range(4):
+#         image_data = requests.get(thumbnail_urls[i+4*j])
+#         image_data.raise_for_status()
+#         image = Image.open(BytesIO(image_data.content))        
+#         axes[i][j].imshow(image)
+#         axes[i][j].axis("off")
+# plt.show()
