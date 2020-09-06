@@ -1,3 +1,3 @@
 # AI/ML Experiments
 
-Random stuff related to AI/ML 
+Random projects related to AI/ML 
