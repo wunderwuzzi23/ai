@@ -9,7 +9,6 @@ import numpy as np
 import imghdr
 import io
 
-
 #load the model
 MODEL = tf.keras.models.load_model("models/huskymodel.h5")
 
