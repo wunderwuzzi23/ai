@@ -6,10 +6,9 @@ import base64
 import tensorflow as tf
 import keras
 import numpy as np
-import imageio
 import imghdr
-import cv2
-from skimage.transform import resize,rescale
+import io
+
 
 #load the model
 MODEL = tf.keras.models.load_model("models/huskymodel.h5")
@@ -23,6 +22,9 @@ sys.stdout = open('log.txt','at')
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
+        forwardedfor = str(self.headers['X-Forwarded-For'])
+        print(f"GET {forwardedfor}")
+       
         self.send_response(200)
         self.end_headers()
         self.wfile.write(STATIC_HTML_PAGE)
@@ -41,6 +43,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                      "CONTENT_TYPE":self.headers["Content-Type"],
                      })
 
+        filename = str(form['file'].filename)
+        forwardedfor = str(self.headers['X-Forwarded-For'])
+        print(f"POST {forwardedfor} File: {filename} - ", end = ".")
         data = form["file"].file.read()
 
         print("Checking image", end = ". ")
@@ -51,29 +56,24 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
              return
 
         num_px = 128
-        images = []
 
-        # read the image
-        image = imageio.imread(data)
-        image = cv2.resize(image, (num_px, num_px))
-       
-        #convert to RGB (we are not considering alpha channel in the model)
-        image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+        # read the image 
+        from PIL import Image
+        img = Image.open(io.BytesIO(data)).convert("RGB")
+        img = img.resize((num_px, num_px))
 
-        image = image/255.0   
-        images.append(image)
-    
-        #image = resize(image, (1, num_px, num_px,3))
-        img_np =  np.array(images)
-        result = MODEL.predict(img_np)[0]
+        image = np.array(img)/255.
+        image = np.expand_dims(image, axis=0)
  
+        result = MODEL.predict(image)
+    
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
 
-        score_percent = result[0]*100
-        score = format(score_percent, '.2f')
-
+        score_percent = float(result[0]*100)
+        score = format(score_percent, '.8f')
+        
         response = '{ "score": "' + str(score) +'",'
         if (result > 0.5):
             response += '"text": "It is a husky!" }'
