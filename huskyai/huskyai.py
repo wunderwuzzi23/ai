@@ -8,16 +8,40 @@ import keras
 import numpy as np
 import imghdr
 import io
+import hashlib
+ 
+# simple mitigation to validate model file wasn't tampered
+model_hash = "681226449b772fa06ec87c44b9dae724c69530d5d46d5449ff298849e5808b86"
+
+def validate_model(filename):
+    with open(filename,"rb") as f:
+        bytes = f.read()
+        hash = hashlib.sha256(bytes).hexdigest();
+
+        if hash == model_hash:
+            return True
+        else:
+            return False
+
+sys.stdout = open('log.txt','at')
+
+MODEL_FILE = "models/huskymodel.h5"
+
+if validate_model(MODEL_FILE)==False:
+    print("Invalid model hash. Exiting.")
+    sys.exit("Model failed validation.")
 
 #load the model
-MODEL = tf.keras.models.load_model("models/huskymodel.h5")
+MODEL = tf.keras.models.load_model(MODEL_FILE)
+
+print("Model loaded.")
 
 #load the template html
 with open("templates/husky.html","rb") as file:
     STATIC_HTML_PAGE = file.read()
 
-sys.stdout = open('log.txt','at')
 
+#simple web server
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
