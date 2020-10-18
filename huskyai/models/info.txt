@@ -1,2 +1,4 @@
 Store the model file here, by default it huskymodel.h5
 The model is currently 38MB and it can't be uploaded to Github because of it's size.
+
+Put an earlier model up on Google Drive: https://drive.google.com/file/d/1lDuG1O0LG06rhrYZYyU38PC83Tk2GF6c/view?usp=sharing
