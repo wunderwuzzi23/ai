@@ -1,3 +1,7 @@
+**Note: This part of the repo has moved to https://github.com/wunderwuzzi23/huskyai**
+
+------
+
 # huskyai - Husky or not?
 
 A model and website that will predict if an uploaded image is a husky or not.
